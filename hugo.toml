@@ -6,8 +6,8 @@ theme = 'PaperMod'
 [params]
   env = "production"
   title = "Nirmal Singh"
-  description = "Software architecture, technology, philosophy, and building things."
-  keywords = ["Blog", "Hugo", "Software Development", "Philosophy"]
+  description = "Software architecture, technology, Software development, philosophy, and building things."
+  keywords = ["software architecture", "technology", "software development", "philosophy", "Philosophy", "building things"]
   author = "Nirmal Singh"
   
   # Visual & UX enhancements
