@@ -1,0 +1,4 @@
+baseURL = 'https://example.org/'
+locale = 'en-us'
+title = 'Nirmal Singh Technical Blog - Built using Hogo - Published using Github Pages+Github Actions+Github repo'
+theme = 'PaperMod'
