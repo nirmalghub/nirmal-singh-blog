@@ -1,12 +1,12 @@
 baseURL = 'https://nirmalghub.github.io/nirmal-singh-blog/'
 languageCode = 'en-us'
-title = 'Nirmal Singh | DevLog'
+title = 'Nirmal Singh'
 theme = 'PaperMod'
 
 [params]
   env = "production"
   title = "Nirmal Singh"
-  description = "Reflections on software engineering, philosophy, and building things."
+  description = "Software architecture, technology, philosophy, and building things."
   keywords = ["Blog", "Hugo", "Software Development", "Philosophy"]
   author = "Nirmal Singh"
   
@@ -24,16 +24,15 @@ theme = 'PaperMod'
   [params.profileMode]
     enabled = true
     title = "Hi, I'm Nirmal 👋"
-    subtitle = "Software architect, writer, and builder exploring tech, philosophy, and life."
-    imageUrl = "" # Optional: add a profile image link here later
+    subtitle = "Software architect, writer, and builder exploring tech, philosophy, and life."    imageUrl = "" # Optional: add a profile image link here later
     imageWidth = 120
     imageHeight = 120
     
     [[params.profileMode.buttons]]
-      name = "Read Blog"
+      name = "Articles"
       url = "posts/"
     [[params.profileMode.buttons]]
-      name = "About Me"
+      name = "About"
       url = "about/"
 
   # Social icons in the header/footer
