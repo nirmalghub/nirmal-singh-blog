@@ -9,7 +9,7 @@ description: "A complete guide on setting up a free, Git-backed developer blog u
 
 For years, writers and developers have wrestled with traditional hosted content platforms (CMS like WordPress) that lock data behind proprietary databases, inject unwanted advertisements, or impose rigid stylistic templates. Recently, I decided to take complete ownership of my digital footprint.
 
-I wanted a publishing workflow that felt as clean and precise as writing code: pure Markdown files managed in a Git repository, built instantly, and hosted for free—all without sacrificing a rich authoring experience.
+I wanted a publishing workflow that felt as clean and precise as writing code: pure Markdown files managed in a Git repository, built instantly, and hosted for free-all without sacrificing a rich authoring experience.
 
 Here is the exact blueprint of how I set up my personal blog using **Hugo**, **Obsidian**, **Git**, **GitHub**, **GitHub Actions**, and **GitHub Pages**.
 
@@ -118,6 +118,9 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Build with Hugo
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_BASEURL: ${{ steps.pages.outputs.base_url }}/
         run: |
           hugo \
             --minify \
@@ -152,7 +155,9 @@ Every setup comes with a learning curve. Here are a few things I resolved during
 1. **TOML Configuration Strictness:** Hugo’s `hugo.toml` expects strict key-value formatting and matching quotes. Unclosed strings or unescaped characters will throw unmarshal errors during build.
 2. **Deprecation Warnings in Newer Hugo Versions:** Hugo v0.158+ deprecated keys like `languageCode` in favor of `locale`. Keeping theme submodules updated ensures zero build warnings.
 3. **Repository Naming vs. Root Domain:** GitHub Pages serves standard repositories as project subfolders (`username.github.io/repo-name/`). Naming the main repository `username.github.io` converts it into a clean, root-level landing site.
-
+4. **Mermaid.js Flowchart Integration:**
+   - The Challenge: Obsidian natively renders mermaid blocks, but Hugo outputs standard `<pre><code class="language-mermaid">` HTML tags, causing static page render failures.
+   - The Fix: Added a lightweight script in layouts/partials/extend_footer.html that dynamically intercepts Hugo code blocks on page load and transforms them into interactive top-down vector charts (graph TD).
 ---
 
 ## Final Thoughts
