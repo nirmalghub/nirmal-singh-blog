@@ -1,5 +1,5 @@
 ---
-title: "How I Built My Own Blazing-Fast Blog with Hugo, Obsidian, and GitHub Pages"
+title: "How I Built My Own Free, Blazing-Fast Blog with Hugo, Obsidian, and GitHub Pages"
 date: 2026-10-12T01:30:00+05:30
 draft: false
 mermaid: true
