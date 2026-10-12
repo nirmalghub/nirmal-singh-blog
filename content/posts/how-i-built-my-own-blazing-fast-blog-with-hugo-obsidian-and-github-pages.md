@@ -3,32 +3,31 @@ title: "How I Built My Own Blazing-Fast Blog with Hugo, Obsidian, and GitHub Pag
 date: 2026-10-12T01:30:00+05:30
 draft: false
 mermaid: true
-tags: ["Obsidian", "Obsidian Git Plugin by Vinzent", "Hugo", "PaperMod Theme", "Static Site Generator", "SSG", "Git", "Github Public Repository", "Github Actions", "GitHub Pages"]
-description: "A complete guide on setting up a free, Git-backed developer blog using Hugo for rendering, Obsidian for writing, and GitHub Actions for continuous deployment."
+tags: ["Hugo", "Obsidian", "GitHub Pages", "GitHub Actions", "Static Site Generator"]
+description: "A step-by-step guide to a free, Git-backed developer blog: Hugo for rendering, Obsidian for writing, GitHub Actions for deployment. Push to live in about 30 seconds."
 ---
 
-For years, writers and developers have wrestled with traditional hosted content platforms (CMS like WordPress) that lock data behind proprietary databases, inject unwanted advertisements, or impose rigid stylistic templates. Recently, I decided to take complete ownership of my digital footprint.
+Traditional CMS platforms like WordPress lock your content behind a database, inject ads, or force rigid templates. I wanted the opposite: a publishing workflow as clean as writing code, with plain Markdown files in a Git repository, built instantly, and hosted for free.
 
-I wanted a publishing workflow that felt as clean and precise as writing code: pure Markdown files managed in a Git repository, built instantly, and hosted for free-all without sacrificing a rich authoring experience.
+The result: **₹0/month, a full site build in milliseconds, and about 30 seconds from "Commit and sync" in Obsidian to live on the internet.** Below is the exact setup using Hugo, Obsidian, Git, GitHub Actions, and GitHub Pages.
 
-Here is the exact blueprint of how I set up my personal blog using **Hugo**, **Obsidian**, **Git**, **GitHub**, **GitHub Actions**, and **GitHub Pages**.
+> 📦 Full source: [github.com/nirmalghub/nirmalghub.github.io](https://github.com/nirmalghub/nirmalghub.github.io)
 
-***full code in github repo https://github.com/nirmalghub/nirmalghub.github.io***
-
----
-
-## The Tech Stack & Workflow
-
-Instead of relying on a heavy backend Content Management System (CMS) like WordPress, I opted for a modern, static site architecture paired with a dedicated local writing environment:
-
-* **Hugo (v0.167.0-extended):** An ultra-fast static site generator written in Go, capable of compiling entire websites in milliseconds. 
-* **PaperMod (Git submodule):** A minimalist, fast, and accessible Hugo theme. 
-* **Obsidian:** A distraction-free, local-first Markdown editor that serves as my personal writing studio.
-* **Obsidian Git plugin (Vinzent03):** Local Workflow. Local Hugo directory linked directly as an Obsidian Vault. Automated Git sync via the Obsidian Git plugin.
-* **Git & GitHub:** Version control to track changes and host the underlying public repository.
-* **GitHub Actions:** A CI/CD pipeline that automatically compiles and deploys the site whenever new content is pushed.
+<!-- SCREENSHOT 1 (optional but recommended): the live site homepage, or a Lighthouse score -->
 
 ---
+
+## The Stack
+
+* **Hugo (v0.167.0-extended):** a static site generator written in Go that compiles entire sites in milliseconds.
+* **PaperMod:** a minimalist, fast, accessible Hugo theme, added as a Git submodule.
+* **Obsidian:** a local-first Markdown editor that serves as my writing studio.
+* **Obsidian Git plugin (by Vinzent03):** commits and pushes from inside Obsidian.
+* **GitHub + GitHub Actions + GitHub Pages:** hosting, CI/CD, and free serving of the built site.
+
+**Prerequisites:** a GitHub account, [Git](https://git-scm.com/) installed, and basic comfort with a terminal. I used Windows; the Hugo install command is the only OS-specific part.
+
+The whole pipeline:
 
 ```mermaid
 graph TD
@@ -36,17 +35,18 @@ graph TD
     B -->|"git push"| C["GitHub Repository"]
     C -->|"GitHub Actions Workflow"| D["GitHub Pages (Live Site)"]
 ```
+
 ---
 
-## 1. Setting Up the Local Hugo Engine
+## 1. Set Up the Local Hugo Site
 
-Getting started locally on Windows was remarkably straightforward. First, I installed Hugo via the terminal:
+Install Hugo (Windows):
 
 ```bash
 winget install Hugo.Hugo.Extended
 ```
 
-Next, I initialized the site structure and added the PaperMod theme as a Git submodule:
+Create the site and add the PaperMod theme as a submodule:
 
 ```bash
 hugo new site my-blog
@@ -55,106 +55,92 @@ git init
 git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
 ```
 
-A minimal `hugo.toml` looks like this:
+A minimal `hugo.toml`:
 
 ```toml
-baseURL = "https://username.github.io/repo-name/"   # change to your actual URL
-languageCode = "en-us"
+baseURL = "https://username.github.io/"
+locale = "en-us"
 title = "My Blog"
 theme = "PaperMod"
 ```
 
-My own version of `hugo.toml` looks like this:
+Here are the handful of extra settings I actually recommend adding under `[params]`:
 
 ```toml
-baseURL = 'https://nirmalghub.github.io/'
-locale = 'en-us'
-title = 'Nirmal Singh'
-theme = 'PaperMod'
-
 [params]
-  env = "production"
-  title = "Nirmal Singh"
-  description = "Software architecture, technology, Software development, philosophy, and building things."
-  keywords = ["software architecture", "technology", "software development", "philosophy", "Philosophy", "building things"]
-  author = "Nirmal Singh"
-  
-  # Visual & UX enhancements
-  ShowReadingTime = true
-  ShowShareButtons = true
-  ShowComments = false
-  ShowPostNavLinks = true
-  ShowBreadCrumbs = true
-  ShowCodeCopyButtons = true
-  disableThemeToggle = false # Allows visitors to switch between Light and Dark mode
-  defaultTheme = "auto"     # Matches system preferences
+  ShowReadingTime = true       # "5 min read" under each title
+  ShowCodeCopyButtons = true   # copy button on code blocks
+  ShowBreadCrumbs = true       # simple navigation trail
+  defaultTheme = "auto"        # follow the visitor's light/dark preference
 
-  # Home page profile mode (gives it a modern landing page look instead of a plain post list)
-  [params.profileMode]
-    enabled = true
-    title = "Hi, I'm Nirmal 👋"
-    subtitle = "Software architect, writer, and builder exploring tech, philosophy, and life."
-    imageUrl = ""   # Optional: add a profile image link here later
-    imageWidth = 120
-    imageHeight = 120
-    
-    [[params.profileMode.buttons]]
-      name = "Articles"
-      url = "posts/"
-    [[params.profileMode.buttons]]
-      name = "About"
-      url = "about/"
-
-  # Social icons in the header/footer
-  [[params.socialIcons]]
-    name = "github"
-    url = "https://github.com/nirmalghub"
-  [[params.socialIcons]]
-    name = "linkedin"
-    url = "https://linkedin.com/in/your-profile"
-
-[markup]
-  [markup.goldmark]
-    [markup.goldmark.renderer]
-      unsafe = true
-  [markup.highlight]
-    noClasses = false
-    style = "github-dark" # Clean syntax highlighting for code blocks
+[markup.goldmark.renderer]
+  unsafe = true                # allow raw HTML inside Markdown
 ```
 
-After that, create your first post and preview locally:
+PaperMod also has a "profile mode" landing page, menus, and social icons. My complete config is in the [repo](https://github.com/nirmalghub/nirmalghub.github.io) if you want to copy from it.
+
+Create a first post and preview locally:
 
 ```bash
 hugo new content posts/hello-world.md
 hugo server -D
 ```
 
-Configuring the site further (PaperMod params, menus, etc.) is just a matter of expanding the same `hugo.toml` file.
+---
+
+## 2. Write in Obsidian, Publish with Git
+
+Writing long-form prose in a code editor feels mechanical. Obsidian fixes that without giving up Git.
+
+1. **Open Hugo as a vault:** in Obsidian choose **Manage Vaults → Open folder as vault** and select your Hugo project folder.
+2. **Install the Git plugin:** *Settings → Community plugins → Browse → "Git"* (by Vinzent03), then enable it.
+3. **Publish:** write with live preview, then run the **Git: Commit and sync** command from the command palette. The plugin handles `git add`, `commit`, and `push`.
+
+<!-- SCREENSHOT 2: Obsidian with the Hugo vault open and the "Commit and sync" command visible -->
+
+### Don't commit Obsidian's noise
+
+Opening the folder as a vault creates a `.obsidian/` directory. Its workspace file changes every time you click anything, which causes constant noisy commits. Add a `.gitignore` at the project root:
+
+```gitignore
+public/
+resources/_gen/
+.hugo_build.lock
+.obsidian/workspace.json
+.obsidian/workspaces.json
+```
+
+Ignoring `public/` keeps the repository light: only Markdown, config, and the theme, never the compiled output. Committing the rest of `.obsidian/` is fine and keeps your plugin settings portable across machines.
+
+### Let the plugin push without prompts
+
+The plugin can't answer password prompts, so set up non-interactive authentication. SSH is the simplest:
+
+```bash
+ssh-keygen -t ed25519 -C "you@example.com"
+# add the contents of ~/.ssh/id_ed25519.pub at GitHub → Settings → SSH and GPG keys
+git remote set-url origin git@github.com:username/username.github.io.git
+```
+
+Prefer HTTPS? Use a Personal Access Token and let Git Credential Manager (bundled with Git for Windows) store it on the first push.
 
 ---
 
-## 2. Elevating the Writing Experience with Obsidian
+## 3. Deploy Automatically with GitHub Actions
 
-While raw text editors like VS Code or Notepad give you complete control, writing long-form prose in a code editor can feel mechanical. To create a smooth writing environment without giving up Git control, I brought in **Obsidian**.
+### Step 1: Name the repo correctly
 
-### How it Works:
+GitHub Pages serves a normal repo at `username.github.io/repo-name/`. Name your repo exactly `username.github.io` and it is served from the clean root `username.github.io`.
 
-1. **Open Hugo as a Vault:** In Obsidian, I used **Manage Vaults → Open folder as vault** and selected my local Hugo project directory.
-2. **Automated Publishing via Git Plugin:** I installed the **Git** community plugin (by Vinzent03) inside Obsidian.
+### Step 2: Switch Pages to GitHub Actions
 
-Now, I can write posts inside Obsidian using live preview, formatting shortcuts, and dark mode. When finished, I run a simple `Commit and sync` command directly within Obsidian, which handles the background `git add`, `commit`, and `push` to GitHub.
+Go to **Repository → Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
 
-> **Note:** Set up a GitHub Personal Access Token (or SSH key) so the plugin can push without interactive prompts.
+This is the step people miss. Without it, the workflow below runs successfully and nothing gets deployed.
 
----
+### Step 3: Add the workflow
 
-## 3. Automating Cloud Deployment with GitHub Actions
-
-One of the most satisfying aspects of this setup is separating **source code** from **compiled web pages**.
-
-By adding a `.gitignore` file that excludes the generated `public/` folder, my Git repository stays lightweight—containing only raw Markdown posts, configuration, and themes.
-
-To make GitHub build the site automatically, I added a workflow file at `.github/workflows/hugo.yml`:
+Create `.github/workflows/hugo.yml`:
 
 ```yaml
 name: Deploy Hugo site to Pages
@@ -196,11 +182,7 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
-          HUGO_BASEURL: ${{ steps.pages.outputs.base_url }}/
-        run: |
-          hugo \
-            --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/"
+        run: hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -219,48 +201,65 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-Now, pushing from Obsidian triggers a cloud build that updates the live site in under 30 seconds.
+Push to `main` and the **Actions** tab shows the build. About 30 seconds later the site is live.
+
+<!-- SCREENSHOT 3: a green GitHub Actions run -->
 
 ---
 
-## Real-World Gotchas Along the Way
+## 4. Bonus: Mermaid Diagrams
 
-Every setup comes with a learning curve. Here are a few things I resolved during the initial build:
+Obsidian renders Mermaid natively, but Hugo just emits a plain code block. A small script converts those blocks into diagrams in the browser.
 
-1. **TOML Configuration Strictness:** Hugo’s `hugo.toml` expects strict key-value formatting and matching quotes. Unclosed strings or unescaped characters will throw unmarshal errors during build.
-2. **Deprecation Warnings in Newer Hugo Versions:** Hugo v0.158+ deprecated keys like `languageCode` in favor of `locale`. Keeping theme submodules updated ensures zero build warnings.
-3. **Repository Naming vs. Root Domain:** GitHub Pages serves standard repositories as project subfolders (`username.github.io/repo-name/`). Naming the main repository `username.github.io` converts it into a clean, root-level landing site.
-4. **Mermaid.js Diagram Support:**  
-   - Obsidian renders Mermaid natively, but Hugo just emits plain code blocks.  
-   - I solved it with a small script in `layouts/partials/extend_footer.html` that finds those blocks on page load and converts them into proper Mermaid diagrams:
+Create `layouts/partials/extend_footer.html`. Wrapping it in `{{ if .Params.mermaid }}` means the library loads only on posts that need it, which keeps every other page fast:
 
-   ```html
-   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-   <script>
-     document.addEventListener("DOMContentLoaded", function () {
-       const mermaidBlocks = document.querySelectorAll(
-         "code.language-mermaid, pre.language-mermaid, div.highlight .language-mermaid"
-       );
+```html
+{{ if .Params.mermaid }}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const blocks = document.querySelectorAll(
+      "code.language-mermaid, pre.language-mermaid, div.highlight .language-mermaid"
+    );
 
-       mermaidBlocks.forEach((block) => {
-         const container = document.createElement("div");
-         container.className = "mermaid";
-         container.textContent = block.textContent;
+    blocks.forEach((block) => {
+      const container = document.createElement("div");
+      container.className = "mermaid";
+      container.textContent = block.textContent;
 
-         const parent = block.closest("div.highlight") || block.parentElement;
-         parent.parentNode.replaceChild(container, parent);
-       });
+      const parent = block.closest("div.highlight") || block.parentElement;
+      parent.parentNode.replaceChild(container, parent);
+    });
 
-       mermaid.initialize({ startOnLoad: true, theme: "dark" });
-     });
-   </script>
-   ```
+    mermaid.initialize({ startOnLoad: true, theme: "dark" });
+  });
+</script>
+{{ end }}
+```
+
+Then add `mermaid: true` to the front matter of any post containing a diagram.
+
+---
+
+## Gotchas I Hit Along the Way
+
+1. **TOML is strict.** Unclosed quotes or unescaped characters cause unmarshal errors at build time.
+2. **Deprecated keys.** Newer Hugo versions (v0.158+) replaced `languageCode` with `locale`. Use `locale`, and keep the theme submodule updated, for zero build warnings.
+3. **Pages source setting.** If the build is green but the site doesn't update, revisit Step 2 in section 3.
+4. **Noisy commits.** If Obsidian creates a commit every time you open a note, `.obsidian/workspace.json` isn't ignored yet.
+
 ---
 
 ## Final Thoughts
 
-Moving away from walled-garden blogging platforms has been deeply liberating. Writing in plain text, version-controlling every thought with Git, and deploying via automated pipelines means my content is completely portable, fast, and future-proof.
+Here is what this setup actually costs and delivers:
 
-If you are looking for a friction-free, developer-friendly way to share your ideas, give Hugo, Obsidian, and GitHub Pages a try!
+* **Cost:** ₹0 (hosting, CI, and a `github.io` domain are all free).
+* **Publish loop:** write in Obsidian, run *Commit and sync*, live in roughly 30 seconds.
+* **Ownership:** every post is a plain Markdown file under version control, so nothing is locked in.
+
+It isn't perfect. There are no built-in comments, and search needs extra configuration. You're also maintaining a small toolchain instead of clicking "Publish" in a dashboard. For me, that trade is worth it.
+
+If you try this, I'd like to hear how it goes. What's your blogging setup, and what would you change?
 
 ---
