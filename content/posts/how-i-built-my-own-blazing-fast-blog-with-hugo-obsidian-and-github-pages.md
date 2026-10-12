@@ -4,12 +4,12 @@ date: 2026-10-12T01:30:00+05:30
 draft: false
 mermaid: true
 tags: ["Hugo", "Obsidian", "GitHub Pages", "GitHub Actions", "Static Site Generator"]
-description: "A step-by-step guide to a free, Git-backed developer blog: Hugo for rendering, Obsidian for writing, GitHub Actions for deployment. Push to live in about 30 seconds."
+description: "A step-by-step guide to a free, Git-backed developer blog: Hugo for rendering, Obsidian for writing, GitHub Actions for deployment. Push to live in about 30-50 seconds."
 ---
 
 Traditional CMS platforms like WordPress lock your content behind a database, inject ads, or force rigid templates. I wanted the opposite: a publishing workflow as clean as writing code, with plain Markdown files in a Git repository, built instantly, and hosted for free.
 
-The result: **₹0/month, a full site build in milliseconds, and about 30 seconds from "Commit and sync" in Obsidian to live on the internet.** Below is the exact setup using Hugo, Obsidian, Git, GitHub Actions, and GitHub Pages.
+The result: **₹0/month, a full site build in milliseconds, and about 30-50 seconds from "Commit and sync" in Obsidian to live on the internet.** Below is the exact setup using Hugo, Obsidian, Git, GitHub Actions, and GitHub Pages.
 
 > 📦 Full source: [github.com/nirmalghub/nirmalghub.github.io](https://github.com/nirmalghub/nirmalghub.github.io)
 
@@ -205,9 +205,11 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-Push to `main` and the **Actions** tab shows the build. About 30 seconds later the site is live.
+Push to `main` and the **Actions** tab shows the build. About 30-50 seconds later the site is live.
 
 ![alt text](/images/image5.png)
+
+![alt text](/images/image6.png)
 
 ---
 
@@ -259,7 +261,7 @@ Then add `mermaid: true` to the front matter of any post containing a diagram.
 Here is what this setup actually costs and delivers:
 
 * **Cost:** ₹0 (hosting, CI, and a `github.io` domain are all free).
-* **Publish loop:** write in Obsidian, run *Commit and sync*, live in roughly 30 seconds.
+* **Publish loop:** write in Obsidian, run *Commit and sync*, live in roughly 30-50 seconds.
 * **Ownership:** every post is a plain Markdown file under version control, so nothing is locked in.
 
 It isn't perfect. There are no built-in comments, and search needs extra configuration. You're also maintaining a small toolchain instead of clicking "Publish" in a dashboard. For me, that trade is worth it.
