@@ -13,6 +13,8 @@ I wanted a publishing workflow that felt as clean and precise as writing code: p
 
 Here is the exact blueprint of how I set up my personal blog using **Hugo**, **Obsidian**, **Git**, **GitHub**, **GitHub Actions**, and **GitHub Pages**.
 
+***full code in github repo https://github.com/nirmalghub/nirmalghub.github.io***
+
 ---
 
 ## The Tech Stack & Workflow
@@ -42,7 +44,6 @@ Getting started locally on Windows was remarkably straightforward. First, I inst
 
 ```bash
 winget install Hugo.Hugo.Extended
-
 ```
 
 Next, I initialized the site structure and added the PaperMod theme as a Git submodule:
@@ -51,11 +52,32 @@ Next, I initialized the site structure and added the PaperMod theme as a Git sub
 hugo new site my-blog
 cd my-blog
 git init
-git submodule add [https://github.com/adityatelange/hugo-PaperMod.git](https://github.com/adityatelange/hugo-PaperMod.git) themes/PaperMod
+git submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
+```
+
+A minimal `hugo.toml` looks like this:
+
+```toml
+baseURL = "https://username.github.io/repo-name/"   # change to your actual URL
+languageCode = "en-us"
+title = "My Blog"
+theme = "PaperMod"
+```
+
+My own version of `hugo.toml` looks like this:
+
+```toml
 
 ```
 
-Configuring the site required editing `hugo.toml` to link the theme, set up the base URL, and configure site metadata.
+After that, create your first post and preview locally:
+
+```bash
+hugo new content posts/hello-world.md
+hugo server -D
+```
+
+Configuring the site further (PaperMod params, menus, etc.) is just a matter of expanding the same `hugo.toml` file.
 
 ---
 
@@ -65,10 +87,12 @@ While raw text editors like VS Code or Notepad give you complete control, writin
 
 ### How it Works:
 
-1. **Open Hugo as a Vault:** In Obsidian, I used **Manage Vaults $\rightarrow$ Open folder as vault** and selected my local Hugo project directory (`nirmal-singh-blog`).
+1. **Open Hugo as a Vault:** In Obsidian, I used **Manage Vaults → Open folder as vault** and selected my local Hugo project directory.
 2. **Automated Publishing via Git Plugin:** I installed the **Git** community plugin (by Vinzent03) inside Obsidian.
 
-Now, I can write posts inside Obsidian using live preview, formatting shortcuts, and dark mode. When finished, I run a simple `Commit and sync` command directly within Obsidian, which handles the background `git add`, `commit`, and `push` to GitHub!
+Now, I can write posts inside Obsidian using live preview, formatting shortcuts, and dark mode. When finished, I run a simple `Commit and sync` command directly within Obsidian, which handles the background `git add`, `commit`, and `push` to GitHub.
+
+> **Note:** Set up a GitHub Personal Access Token (or SSH key) so the plugin can push without interactive prompts.
 
 ---
 
@@ -110,7 +134,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: '0.167.0'   # pin the version for reproducibility
           extended: true
 
       - name: Setup Pages
@@ -141,7 +165,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
 ```
 
 Now, pushing from Obsidian triggers a cloud build that updates the live site in under 30 seconds.
@@ -155,9 +178,31 @@ Every setup comes with a learning curve. Here are a few things I resolved during
 1. **TOML Configuration Strictness:** Hugo’s `hugo.toml` expects strict key-value formatting and matching quotes. Unclosed strings or unescaped characters will throw unmarshal errors during build.
 2. **Deprecation Warnings in Newer Hugo Versions:** Hugo v0.158+ deprecated keys like `languageCode` in favor of `locale`. Keeping theme submodules updated ensures zero build warnings.
 3. **Repository Naming vs. Root Domain:** GitHub Pages serves standard repositories as project subfolders (`username.github.io/repo-name/`). Naming the main repository `username.github.io` converts it into a clean, root-level landing site.
-4. **Mermaid.js Flowchart Integration:**
-   - The Challenge: Obsidian natively renders mermaid blocks, but Hugo outputs standard `<pre><code class="language-mermaid">` HTML tags, causing static page render failures.
-   - The Fix: Added a lightweight script in layouts/partials/extend_footer.html that dynamically intercepts Hugo code blocks on page load and transforms them into interactive top-down vector charts (graph TD).
+4. **Mermaid.js Diagram Support:**  
+   - Obsidian renders Mermaid natively, but Hugo just emits plain code blocks.  
+   - I solved it with a small script in `layouts/partials/extend_footer.html` that finds those blocks on page load and converts them into proper Mermaid diagrams:
+
+   ```html
+   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+   <script>
+     document.addEventListener("DOMContentLoaded", function () {
+       const mermaidBlocks = document.querySelectorAll(
+         "code.language-mermaid, pre.language-mermaid, div.highlight .language-mermaid"
+       );
+
+       mermaidBlocks.forEach((block) => {
+         const container = document.createElement("div");
+         container.className = "mermaid";
+         container.textContent = block.textContent;
+
+         const parent = block.closest("div.highlight") || block.parentElement;
+         parent.parentNode.replaceChild(container, parent);
+       });
+
+       mermaid.initialize({ startOnLoad: true, theme: "dark" });
+     });
+   </script>
+   ```
 ---
 
 ## Final Thoughts
