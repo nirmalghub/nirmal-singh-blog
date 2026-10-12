@@ -67,7 +67,59 @@ theme = "PaperMod"
 My own version of `hugo.toml` looks like this:
 
 ```toml
+baseURL = 'https://nirmalghub.github.io/'
+locale = 'en-us'
+title = 'Nirmal Singh'
+theme = 'PaperMod'
 
+[params]
+  env = "production"
+  title = "Nirmal Singh"
+  description = "Software architecture, technology, Software development, philosophy, and building things."
+  keywords = ["software architecture", "technology", "software development", "philosophy", "Philosophy", "building things"]
+  author = "Nirmal Singh"
+  
+  # Visual & UX enhancements
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowComments = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  disableThemeToggle = false # Allows visitors to switch between Light and Dark mode
+  defaultTheme = "auto"     # Matches system preferences
+
+  # Home page profile mode (gives it a modern landing page look instead of a plain post list)
+  [params.profileMode]
+    enabled = true
+    title = "Hi, I'm Nirmal 👋"
+    subtitle = "Software architect, writer, and builder exploring tech, philosophy, and life."
+    imageUrl = ""   # Optional: add a profile image link here later
+    imageWidth = 120
+    imageHeight = 120
+    
+    [[params.profileMode.buttons]]
+      name = "Articles"
+      url = "posts/"
+    [[params.profileMode.buttons]]
+      name = "About"
+      url = "about/"
+
+  # Social icons in the header/footer
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/nirmalghub"
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://linkedin.com/in/your-profile"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    noClasses = false
+    style = "github-dark" # Clean syntax highlighting for code blocks
 ```
 
 After that, create your first post and preview locally:
