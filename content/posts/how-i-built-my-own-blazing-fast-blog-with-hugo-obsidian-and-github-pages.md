@@ -13,7 +13,12 @@ The result: **₹0/month, a full site build in milliseconds, and about 30 second
 
 > 📦 Full source: [github.com/nirmalghub/nirmalghub.github.io](https://github.com/nirmalghub/nirmalghub.github.io)
 
-<!-- SCREENSHOT 1 (optional but recommended): the live site homepage, or a Lighthouse score -->
+
+![alt text](/images/image1.png)
+
+![alt text](/images/image2.png)
+
+![alt text](/images/image3.png)
 
 ---
 
@@ -96,7 +101,7 @@ Writing long-form prose in a code editor feels mechanical. Obsidian fixes that w
 2. **Install the Git plugin:** *Settings → Community plugins → Browse → "Git"* (by Vinzent03), then enable it.
 3. **Publish:** write with live preview, then run the **Git: Commit and sync** command from the command palette. The plugin handles `git add`, `commit`, and `push`.
 
-<!-- SCREENSHOT 2: Obsidian with the Hugo vault open and the "Commit and sync" command visible -->
+![alt text](/images/image4.png)
 
 ### Don't commit Obsidian's noise
 
@@ -104,10 +109,9 @@ Opening the folder as a vault creates a `.obsidian/` directory. Its workspace fi
 
 ```gitignore
 public/
-resources/_gen/
 .hugo_build.lock
-.obsidian/workspace.json
-.obsidian/workspaces.json
+resources/_gen/
+.obsidian
 ```
 
 Ignoring `public/` keeps the repository light: only Markdown, config, and the theme, never the compiled output. Committing the rest of `.obsidian/` is fine and keeps your plugin settings portable across machines.
@@ -203,7 +207,7 @@ jobs:
 
 Push to `main` and the **Actions** tab shows the build. About 30 seconds later the site is live.
 
-<!-- SCREENSHOT 3: a green GitHub Actions run -->
+![alt text](/images/image5.png)
 
 ---
 
